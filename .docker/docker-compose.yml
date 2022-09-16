@@ -1,0 +1,18 @@
+version: '3.5'
+
+services:
+
+  app:
+    image: "${DOCKER_REGISTRY_URL}/${APP_NAME}/app${APP_TAG}"
+    networks:
+      default:
+        aliases:
+          - ${APP_NAME}-app
+    environment:
+      - APP_ENV
+      - APP_NAME
+
+networks:
+  default:
+    name: ${APP_PROJECT}
+    driver: bridge

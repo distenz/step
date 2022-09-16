@@ -1,0 +1,13 @@
+version: '3.5'
+
+services:
+
+  app:
+    user: $APP_UID
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      target: development
+    command: [ "sleep infinity" ]
+    volumes:
+      - ../src:/srv/app
