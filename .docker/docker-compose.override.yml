@@ -5,9 +5,11 @@ services:
   app:
     user: $APP_UID
     build:
-      context: ./
+      context: ./step
       dockerfile: Dockerfile
       target: development
-    command: [ "sleep infinity" ]
+    command: [ "npm run dev" ]
+    ports:
+      - $APP_PORT:4200
     volumes:
-      - ../src:/srv/app
+      - ../src/step:/srv/app
