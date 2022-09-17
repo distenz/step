@@ -4,7 +4,7 @@ FROM node:16-buster AS base
 
 RUN npm install -g npm@8
 
-EXPOSE 4200/tcp
+EXPOSE 4200/tcp 4173/tcp
 
 # init basedir for the project
 RUN mkdir /srv/app

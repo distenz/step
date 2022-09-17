@@ -11,5 +11,6 @@ services:
     command: [ "npm run dev" ]
     ports:
       - $APP_PORT:4200
+      - $APP_PREVIEW_PORT:4173
     volumes:
       - ../src/step:/srv/app
