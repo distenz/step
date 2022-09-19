@@ -9,13 +9,13 @@ const store = graphService(),
   }>(),
   state = reactive({
     input: '',
-    showConnections: false,
+    connect: '',
+    showConnections: true,
     data: store.nodes[props.id],
   }),
-  element = ref<HTMLInputElement | undefined>()
+  inputElement = ref<HTMLInputElement | undefined>()
 
-const edgeCount = computed(() => state.data.edges.length),
-  connections = computed(() => {
+const connections = computed(() => {
     return state.data.edges
       .map(edgeId => {
         return store.edges[edgeId]
@@ -24,40 +24,64 @@ const edgeCount = computed(() => state.data.edges.length),
         return store.nodes[props.id === fromId ? toId : fromId]
       })
       .filter(({ id }) => !props.path.includes(id))
-  })
+  }),
+  edgeCount = computed(() => state.data.edges.length),
+  otherDirectionEdgeCount = computed(() => connections.value.length)
 
 onMounted(() => {
-  element.value?.focus()
+  inputElement.value?.focus()
 })
 
-function setValue(input: string) {
-  if (!input) return
-  state.data.value = input
+function setValue() {
+  if (!state.input) return
+  state.data.value = state.input
+  state.input = ''
+}
+function connect() {
+  if (!state.connect) return
+  store.connect(props.id, state.connect)
+  state.connect = ''
 }
 </script>
 
 <template>
   <article class="graph__node">
     <section class="node__data">
-      <span>N#{{ id }} = </span>
+      <span>N#{{ id }}</span>
+      <span> = </span>
       <p v-if="state.data.value">{{ state.data.value }}</p>
       <template v-else>
         <input
           type="text"
-          ref="element"
+          placeholder="Node value"
+          ref="inputElement"
           v-model="state.input"
-          @keyup.enter="setValue(state.input)"
+          @keyup.enter="setValue"
         />
-        <button @click="setValue(state.input)">Add</button>
       </template>
       <p>(E:{{ edgeCount }})</p>
       <button @click="store.connect(props.id)">Expand</button>
-      <button @click="state.showConnections = !state.showConnections">
-        {{ state.showConnections ? 'Hide Connections' : 'Show Connections' }}
-      </button>
+      <input
+        type="text"
+        placeholder="Connect to NID"
+        ref="connectElement"
+        v-model="state.connect"
+        @keyup.enter="connect"
+      />
+      <label for="node__show-connections">
+        Edges
+        <input
+          id="node__show-connections"
+          type="checkbox"
+          v-model="state.showConnections"
+        />
+      </label>
     </section>
 
-    <section class="node__connections" v-if="state.showConnections">
+    <section
+      class="node__connections"
+      v-if="state.showConnections && otherDirectionEdgeCount > 0"
+    >
       <GraphNode
         v-for="node in connections"
         :key="node.id"
@@ -72,6 +96,9 @@ function setValue(input: string) {
 .graph__node {
   background-color: #212121ff;
   padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 
   &:not(:last-of-type) {
     border-bottom: 1px solid #ccc;
@@ -83,6 +110,10 @@ function setValue(input: string) {
     justify-content: flex-start;
 
     gap: 0.5rem;
+  }
+  .node__connections {
+    border-radius: 2px;
+    border: 1px solid #ccc;
   }
   p {
     margin-bottom: 0;

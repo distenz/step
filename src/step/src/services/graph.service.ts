@@ -37,8 +37,8 @@ export const graphService = defineStore('graph', {
       return id
     },
     connect<T>(
-      fromId: INodeData<any>['id'],
-      toId?: INodeData<any>['id'],
+      fromId: INodeData<T>['id'],
+      toId?: INodeData<T>['id'],
       value?: T
     ) {
       const id = generateId()
