@@ -26,7 +26,15 @@ const connections = computed(() => {
       .filter(({ id }) => !props.path.includes(id))
   }),
   edgeCount = computed(() => state.data.edges.length),
-  otherDirectionEdgeCount = computed(() => connections.value.length)
+  otherDirectionEdgeCount = computed(() => connections.value.length),
+  showEdges = computed(
+    () => state.showConnections && otherDirectionEdgeCount.value > 0
+  ),
+  showEdgeCorner = computed(
+    () =>
+      props.path.length > 1 &&
+      props.id.toString() === props.path[props.path.length - 1].toString()
+  )
 
 onMounted(() => {
   inputElement.value?.focus()
@@ -45,8 +53,8 @@ function connect() {
 </script>
 
 <template>
-  <article class="graph__node">
-    <section class="node__data">
+  <section class="vertice">
+    <article class="vertice__data">
       <span>N#{{ id }}</span>
       <span> = </span>
       <p v-if="state.data.value">{{ state.data.value }}</p>
@@ -60,7 +68,7 @@ function connect() {
         />
       </template>
       <p>(E:{{ edgeCount }})</p>
-      <button @click="store.connect(props.id)">Expand</button>
+      <button @click="store.connect(props.id)">Extend</button>
       <input
         type="text"
         placeholder="Connect to NID"
@@ -76,12 +84,10 @@ function connect() {
           v-model="state.showConnections"
         />
       </label>
-    </section>
-
-    <section
-      class="node__connections"
-      v-if="state.showConnections && otherDirectionEdgeCount > 0"
-    >
+    </article>
+    <span class="edge" :class="{ '--show-corner': showEdgeCorner }"></span>
+    <span class="edge-connector" v-if="showEdges"></span>
+    <section v-if="showEdges" class="vertice__edges">
       <GraphNode
         v-for="node in connections"
         :key="node.id"
@@ -89,41 +95,55 @@ function connect() {
         :path="[...path, node.id]"
       />
     </section>
-  </article>
+  </section>
 </template>
 
 <style scoped="" lang="scss">
-.graph__node {
-  background-color: #212121ff;
-  padding: 0.5rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+.vertice {
+  position: relative;
 
-  &:not(:last-of-type) {
-    border-bottom: 1px solid #ccc;
-  }
-  .node__data {
+  display: grid;
+
+  grid-template-columns: 0.25rem min-content 1fr;
+  grid-template-rows: max-content max-content;
+
+  grid-template-areas:
+    'edge vertice vertice'
+    'edge edgeConnector verticeEdge'
+    'corner edgeConnector verticeEdge';
+
+  .vertice__data {
+    grid-area: vertice;
+
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
-
     gap: 0.5rem;
   }
-  .node__connections {
-    border-radius: 2px;
-    border: 1px solid #ccc;
+  .vertice__edges {
+    grid-area: verticeEdge;
   }
-  p {
-    margin-bottom: 0;
-    line-height: 1.5rem;
+  .edge {
+    grid-area: edge;
+    height: 100%;
+
+    background-color: var(--color-accent);
+
+    &.--show-corner {
+      grid-row-start: edge;
+      grid-column-start: edge;
+      grid-row-end: corner;
+      grid-column-end: corner;
+    }
   }
-  input {
-    line-height: 1.5rem;
-    padding: 0 0.25rem;
-    margin: 0;
-    border: 0;
+  .edge-connector {
+    grid-area: edgeConnector;
+
+    width: 1rem;
+    height: 0.25rem;
+    align-self: center;
+    background-color: var(--color-accent);
   }
 }
 </style>

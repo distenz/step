@@ -4,7 +4,7 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 
-import './assets/main.css'
+import './assets/main.scss'
 import { consoleErrorMiddleware } from './utility/console-error.middleware'
 
 const app = createApp(App)

@@ -21,9 +21,9 @@ if (0 >= store.nodeCount) {
 </script>
 
 <template>
-  <article class="graph">
-    <button @click="store.add('')">Add top level node</button>
-    <section>
+  <section class="graph">
+    <button a-btn="raised" @click="store.add('')">Add node</button>
+    <section class="graph__list">
       <GraphNode
         v-for="node in store.nodes"
         :key="node.id"
@@ -31,7 +31,7 @@ if (0 >= store.nodeCount) {
         :path="[node.id]"
       />
     </section>
-  </article>
+  </section>
 </template>
 
 <style scoped lang="scss">
@@ -39,10 +39,12 @@ if (0 >= store.nodeCount) {
   display: flex;
   flex-direction: column;
   width: 100%;
+  gap: 1rem;
 
-  section {
-    border-radius: 2px;
-    border: 1px solid #ccc;
+  .graph__list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
   }
 }
 </style>
