@@ -16,6 +16,10 @@
   --vt-c-green-soft: hsl(120, 50%, 33%);
   --vt-c-green-mute: hsl(120, 50%, 25%);
 
+  --vt-c-orange     : hsl(35, 100%, 50%);
+  --vt-c-orange-soft: hsl(35, 80%, 60%);
+  --vt-c-orange-mute: hsl(35, 100%, 40%);
+
   --vt-c-indigo: hsl(210, 29%, 24%);
 
   --vt-c-divider-light-1: rgba(60, 60, 60, 0.29);
@@ -46,11 +50,15 @@
   --color-primary     : var(--vt-c-purple);
   --color-primary-soft: var(--vt-c-purple-soft);
   --color-primary-mute: var(--vt-c-purple-mute);
-  --color-accent      : var(--vt-c-green);
-  --color-accent-soft : var(--vt-c-green-soft);
-  --color-accent-mute : var(--vt-c-green-mute);
+  --color-accent      : var(--vt-c-orange);
+  --color-accent-soft : var(--vt-c-orange-soft);
+  --color-accent-mute : var(--vt-c-orange-mute);
+  --color-success     : var(--vt-c-green);
+  --color-success-soft: var(--vt-c-green-soft);
+  --color-success-mute: var(--vt-c-green-mute);
 
-  --section-gap: 160px;
+  --gap-s: .5rem;
+  --gap-m: 1rem;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -84,9 +92,9 @@
 }
 
 body {
-  min-height : 100vh;
+  height     : 100vh;
   color      : var(--color-text);
-  background : var(--color-background-soft);
+  background : var(--color-background-mute);
   transition : color 0.5s, background-color 0.5s;
   line-height: 1.6;
   font-family: Roboto, -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen, Ubuntu,
@@ -95,6 +103,7 @@ body {
   text-rendering         : optimizeLegibility;
   -webkit-font-smoothing : antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow               : hidden;
 }
 
 button {
@@ -116,17 +125,8 @@ button {
 
   cursor: pointer;
 
-  &:hover {
-    color           : var(--color-button-hover);
-    background-color: rgba(0, 0, 0, .1);
-  }
-
   &[a-btn=flat] {
     background-color: var(--color-primary);
-
-    &:hover {
-      background-color: var(--color-primary-soft);
-    }
   }
 
   &[a-btn=stroked] {
@@ -136,19 +136,14 @@ button {
   &[a-btn=raised] {
     box-shadow      : var(--elevated);
     background-color: var(--color-primary);
-
-
-    &:hover {
-      background-color: var(--color-primary-soft);
-    }
   }
 }
 
 article {
-  border-radius: 2px;
-  box-shadow   : var(--elevated);
-
-  padding: .5rem;
+  border-radius   : 2px;
+  box-shadow      : var(--elevated);
+  background-color: var(--color-background-soft);
+  padding         : .5rem;
 }
 
 p,
@@ -157,6 +152,10 @@ span {
   font-size    : 1rem;
   font-weight  : 300;
   line-height  : 1.6rem;
+}
+
+label {
+  color: var(--color-button);
 }
 
 input {
@@ -168,4 +167,30 @@ input {
   background-color: var(--color-background-mute);
   color           : var(--color-text);
   caret-color     : var(--color-text);
+}
+
+a {
+  text-decoration: none;
+  color          : var(--color-button);
+  transition     : 0.4s;
+}
+
+@media (hover: hover) {
+  a:hover {
+    color           : var(--color-button-hover);
+    background-color: var(--color-primary-soft);
+  }
+
+  button:hover {
+    color           : var(--color-button-hover);
+    background-color: rgba(0, 0, 0, .1);
+
+    &[a-btn=flat] {
+      background-color: var(--color-primary-soft);
+    }
+
+    &[a-btn=raised] {
+      background-color: var(--color-primary-soft);
+    }
+  }
 }

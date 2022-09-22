@@ -5,15 +5,15 @@ import { RouterLink, RouterView } from 'vue-router'
 <template>
   <header>
     <img
-      alt="Vue logo"
+      alt="Step logo"
       class="logo"
-      src="@/assets/logo.svg"
+      src="@/assets/step-logo-5-1.svg"
       width="32"
       height="32"
     />
 
     <nav>
-      <RouterLink to="/">Create Graph #1</RouterLink>
+      <RouterLink to="/">Directed Simple Graph</RouterLink>
     </nav>
   </header>
 
@@ -22,22 +22,31 @@ import { RouterLink, RouterView } from 'vue-router'
 
 <style scoped lang="scss">
 header {
+  grid-area: header;
+
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: var(--gap-m);
+  height: 3rem;
+  padding: 0 var(--gap-s);
 
-  background-color: val(--color-background);
+  background-color: var(--color-background);
 
   nav {
     display: flex;
-    flex-direction: 0.5rem;
+    flex-direction: row;
     align-items: center;
     justify-content: flex-start;
-    gap: 1rem;
+    gap: var(--gap-m);
 
     a.router-link-exact-active {
-      color: var(--color-text);
+      color: var(--color-button-hover);
     }
+  }
+  & + * {
+    grid-area: main;
+    padding: var(--gap-s);
+    overflow: auto;
   }
 }
 </style>

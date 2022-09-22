@@ -1,34 +1,55 @@
 <script setup lang="ts">
-/**
- * @todo Now all nodes are being rendered. We can not differentiate between nodes upon startup.
- * We have to procure a method which reduces the initial network size to a special set of nodes.
- * The reason for this requirement is that the graph is ment to be big by design, so it is unwise
- * in the long run to render the whole graph on load.
- * The other reason is that it goes against the design goal of the application, which is to present
- * the network in a UX friendly way.
- * My initial ideas for the solution is the imp of directional edges, so we can search for nodes who
- * are only pointing and not pointed to. These nodes may be an ideal starting point, and represent
- * top level data.
- */
 import { graphService } from '@/services/graph.service'
-import GraphNode from './GraphNode.vue'
+import { computed, reactive } from 'vue'
+import DirectedSimpleGraphVertex from './DirectedSimpleGraphVertex.vue'
 
-const store = graphService()
+const store = graphService(),
+  logVertices = () => console.log(store.V),
+  logEdges = () => console.log(store.E),
+  orientation = computed(() =>
+    state.orientation === 'tailless' ? store.onlyHeadV : store.topDegreeV
+  ),
+  state = reactive({
+    orientation: 'tailless',
+  })
 
-if (0 >= store.nodeCount) {
-  store.add('')
+if (0 >= store.vertexCount) {
+  store.addV('')
 }
 </script>
 
 <template>
   <section class="graph">
-    <button a-btn="raised" @click="store.add('')">Add node</button>
+    <header class="graph__actions">
+      <button @click="logVertices">Log Vertices</button>
+      <button @click="logEdges">Log Edges</button>
+      <button a-btn="raised" @click="store.addV('')">Add vertex</button>
+      <span> Orientation: </span>
+      <label>
+        Tailless
+        <input
+          type="radio"
+          name="orientation"
+          v-model="state.orientation"
+          value="tailless"
+        />
+      </label>
+      <label>
+        Most degrees
+        <input
+          type="radio"
+          name="orientation"
+          v-model="state.orientation"
+          value="hottest"
+        />
+      </label>
+    </header>
     <section class="graph__list">
-      <GraphNode
-        v-for="node in store.nodes"
-        :key="node.id"
-        :id="node.id"
-        :path="[node.id]"
+      <DirectedSimpleGraphVertex
+        v-for="v in orientation"
+        :key="v[0]"
+        :id="v[0]"
+        :path="[v[0]]"
       />
     </section>
   </section>
@@ -40,6 +61,18 @@ if (0 >= store.nodeCount) {
   flex-direction: column;
   width: 100%;
   gap: 1rem;
+
+  & > button {
+    width: auto;
+    flex: 0 1 auto;
+  }
+
+  .graph__actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--gap-s);
+  }
 
   .graph__list {
     display: flex;
