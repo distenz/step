@@ -13,7 +13,8 @@ import { RouterLink, RouterView } from 'vue-router'
     />
 
     <nav>
-      <RouterLink to="/">Directed Simple Graph</RouterLink>
+      <RouterLink to="/tree">Tree view</RouterLink>
+      <RouterLink to="/cursor">Cursor view</RouterLink>
     </nav>
   </header>
 

@@ -3,32 +3,42 @@ import type { IEdge } from '@/utility/edge.interface'
 import { isVertex } from '@/utility/vertex.guard'
 import type { IVertex } from '@/utility/vertex.interface'
 import { defineStore } from 'pinia'
+import { packageService } from './package.service'
 
 export interface IGraph {
-  V: Map<IVertex['id'], IVertex>
-  E: Map<IEdge['id'], IEdge>
+  V: Array<IVertex>
+  E: Array<IEdge>
+  lastVId: number
+  lastEId?: number
 }
 
 export const graphService = defineStore('graph', {
-  state: (): IGraph & { lastId: number } => {
+  state: (): IGraph => {
     return {
-      V: new Map<IVertex['id'], IVertex>(),
-      E: new Map<IEdge['id'], IEdge>(),
-      lastId: 0,
+      V: [
+        {
+          id: 0,
+          edges: [],
+          value: undefined,
+        },
+      ],
+      E: [],
+      lastVId: 0,
+      lastEId: undefined,
     }
   },
   getters: {
-    vertexCount: state => state.V.size,
+    vertexCount: state => state.V.length,
     onlyHeadV: state => {
-      const res: Map<IVertex['id'], IVertex> = new Map()
+      const res: Array<IVertex> = []
       state.V.forEach(v => {
         if (
           v.edges
-            .map(eId => state.E.get(eId))
+            .map(eId => state.E[eId])
             .filter(isEdge)
             .filter(e => v.id === e.tailId).length === v.edges.length
         )
-          res.set(v.id, v)
+          res.push(v)
       })
       return res
     },
@@ -37,66 +47,89 @@ export const graphService = defineStore('graph', {
      * The degree or valency of a vertex is the number of edges that are incident to it
      * @param state
      */
-    topDegreeV: state => {
+    topDegreeV: (state): IVertex => {
       let max: IVertex | undefined = undefined
-      const res = new Map<IVertex['id'], IVertex>()
       for (const v of state.V.values()) {
         max = !max ? v : v.edges.length > max.edges.length ? v : max
       }
       if (!isVertex(max)) throw new Error('graph has no vertices')
-      res.set(max.id, max)
-      return res
+
+      return max
     },
   },
   actions: {
-    next() {
-      this.lastId = this.lastId + 1
-      return this.lastId
+    nextV() {
+      this.lastVId = this.lastVId + 1
+      return this.lastVId
+    },
+    nextE() {
+      this.lastEId = this.lastEId === undefined ? 0 : this.lastEId + 1
+      return this.lastEId
     },
     getV(v: IVertex | IVertex['id']) {
-      const vertice = isVertex(v) ? v : this.V.get(v)
+      const vertice = isVertex(v) ? v : this.V[v]
       if (!isVertex(vertice)) throw new Error('could not find vertice')
       else return vertice
     },
+    getBFSHead(fromId: IVertex['id'], searchId: IVertex['id']) {
+      if (fromId === searchId) return true
+      for (const v of this.heads(fromId)) {
+        if (v.id === searchId) return true
+        this.getBFSHead(v.id, searchId)
+      }
+      return false
+    },
     addV<T>(value: T) {
-      const id = this.next()
+      const id = this.nextV()
 
-      this.V.set(id, <IVertex>{
+      this.V[id] = {
         id,
         edges: [],
         value,
-      })
+      }
       return id
     },
+    removeV(id: IVertex['id']) {
+      this.V[id].edges.forEach(eId => this.E.splice(eId, 1))
+      this.V.splice(id, 1)
+    },
     connect<T>(tailId: IVertex['id'], headId?: IVertex['id'], value?: T) {
-      const id = this.next()
+      const id = this.nextE()
       headId = headId || this.addV('')
-      this.E.set(id, {
+      this.E[id] = {
         id,
         tailId: tailId,
         headId: headId,
         value,
-      })
-      this.V.get(tailId)?.edges.push(id)
-      this.V.get(headId)?.edges.push(id)
+      }
+      const tail = this.V[tailId],
+        head = this.V[headId]
+      tail.edges.push(id)
+      head.edges.push(id)
     },
     heads(v: IVertex | IVertex['id']) {
       const vertice = this.getV(v)
       return vertice.edges
-        .map(eId => this.E.get(eId))
+        .map(eId => this.E[eId])
         .filter(isEdge)
         .filter(e => e.tailId === vertice.id)
-        .map(e => this.V.get(e.headId))
+        .map(e => this.V[e.headId])
         .filter(isVertex)
     },
     tails(v: IVertex | IVertex['id']) {
       const vertice = this.getV(v)
       return vertice.edges
-        .map(eId => this.E.get(eId))
+        .map(eId => this.E[eId])
         .filter(isEdge)
         .filter(e => e.headId === vertice.id)
-        .map(e => this.V.get(e.tailId))
+        .map(e => this.V[e.tailId])
         .filter(isVertex)
     },
+  },
+  persist: {
+    enabled: true,
+    strategies: [
+      { key: packageService().storagePrefix + 'graph', storage: localStorage },
+    ],
   },
 })

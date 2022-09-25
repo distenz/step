@@ -36,6 +36,7 @@ export function consoleErrorMiddleware(
     consoleStyle.divider,
     consoleStyle.type,
     consoleStyle.divider,
-    consoleStyle.error
+    consoleStyle.error,
+    error
   )
 }
