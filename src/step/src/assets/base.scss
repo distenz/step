@@ -1,22 +1,22 @@
 /* color palette from <https://github.com/vuejs/theme> */
 :root {
-  --vt-c-white     : hsl(0, 0%, 100%);
+  --vt-c-white: hsl(0, 0%, 100%);
   --vt-c-white-soft: hsl(0, 0%, 97%);
   --vt-c-white-mute: hsl(0, 0%, 95%);
 
-  --vt-c-black     : hsl(0, 0%, 9%);
+  --vt-c-black: hsl(0, 0%, 9%);
   --vt-c-black-soft: hsl(0, 0%, 13%);
   --vt-c-black-mute: hsl(0, 0%, 16%);
 
-  --vt-c-purple     : hsl(300, 100%, 33%);
+  --vt-c-purple: hsl(300, 100%, 33%);
   --vt-c-purple-soft: hsl(300, 50%, 50%);
   --vt-c-purple-mute: hsl(300, 75%, 33%);
 
-  --vt-c-green     : hsl(120, 100%, 33%);
+  --vt-c-green: hsl(120, 100%, 33%);
   --vt-c-green-soft: hsl(120, 50%, 33%);
   --vt-c-green-mute: hsl(120, 50%, 25%);
 
-  --vt-c-orange     : hsl(35, 100%, 50%);
+  --vt-c-orange: hsl(35, 100%, 50%);
   --vt-c-orange-soft: hsl(35, 80%, 60%);
   --vt-c-orange-mute: hsl(35, 100%, 40%);
 
@@ -24,134 +24,133 @@
 
   --vt-c-divider-light-1: rgba(60, 60, 60, 0.29);
   --vt-c-divider-light-2: rgba(60, 60, 60, 0.12);
-  --vt-c-divider-dark-1 : rgba(84, 84, 84, 0.65);
-  --vt-c-divider-dark-2 : rgba(84, 84, 84, 0.48);
+  --vt-c-divider-dark-1: rgba(84, 84, 84, 0.65);
+  --vt-c-divider-dark-2: rgba(84, 84, 84, 0.48);
 
   --vt-c-text-light-1: var(--vt-c-indigo);
   --vt-c-text-light-2: rgba(60, 60, 60, 0.66);
-  --vt-c-text-dark-1 : var(--vt-c-white-soft);
-  --vt-c-text-dark-2 : rgba(235, 235, 235, 0.64);
-  --vt-c-text-dark-3 : var(--vt-c-white);
+  --vt-c-text-dark-1: var(--vt-c-white-soft);
+  --vt-c-text-dark-2: rgba(235, 235, 235, 0.64);
+  --vt-c-text-dark-3: var(--vt-c-white);
 }
 
 /* semantic color variables for this project */
 :root {
-  --color-background     : var(--vt-c-white);
+  --color-background: var(--vt-c-white);
   --color-background-soft: var(--vt-c-white-soft);
   --color-background-mute: var(--vt-c-white-mute);
 
-  --color-border      : var(--vt-c-divider-light-2);
+  --color-border: var(--vt-c-divider-light-2);
   --color-border-hover: var(--vt-c-divider-light-1);
 
-  --color-heading   : var(--vt-c-text-light-1);
-  --color-text      : var(--vt-c-text-light-1);
+  --color-heading: var(--vt-c-text-light-1);
+  --color-text: var(--vt-c-text-light-1);
   --color-text-hover: var(--vt-c-text-light-2);
 
-  --color-primary     : var(--vt-c-purple);
+  --color-primary: var(--vt-c-purple);
   --color-primary-soft: var(--vt-c-purple-soft);
   --color-primary-mute: var(--vt-c-purple-mute);
-  --color-accent      : var(--vt-c-orange);
-  --color-accent-soft : var(--vt-c-orange-soft);
-  --color-accent-mute : var(--vt-c-orange-mute);
-  --color-success     : var(--vt-c-green);
+  --color-accent: var(--vt-c-orange);
+  --color-accent-soft: var(--vt-c-orange-soft);
+  --color-accent-mute: var(--vt-c-orange-mute);
+  --color-success: var(--vt-c-green);
   --color-success-soft: var(--vt-c-green-soft);
   --color-success-mute: var(--vt-c-green-mute);
 
-  --gap-s: .5rem;
+  --gap-s: 0.5rem;
   --gap-m: 1rem;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-background     : var(--vt-c-black);
+    --color-background: var(--vt-c-black);
     --color-background-soft: var(--vt-c-black-soft);
     --color-background-mute: var(--vt-c-black-mute);
 
-    --color-border      : var(--vt-c-divider-dark-2);
+    --color-border: var(--vt-c-divider-dark-2);
     --color-border-hover: var(--vt-c-divider-dark-1);
 
     --color-heading: var(--vt-c-text-dark-1);
-    --color-text   : var(--vt-c-text-dark-2);
+    --color-text: var(--vt-c-text-dark-2);
 
-    --color-button      : var(--vt-c-text-dark-1);
+    --color-button: var(--vt-c-text-dark-1);
     --color-button-hover: var(--vt-c-text-dark-3);
 
-    --elevated: 0 3px 1px -2px #0003,
-      0 2px 2px #00000024,
-      0 1px 5px #0000001f;
+    --elevated: 0 3px 1px -2px #0003, 0 2px 2px #00000024, 0 1px 5px #0000001f;
   }
 }
 
 *,
 *::before,
 *::after {
-  box-sizing : border-box;
-  margin     : 0;
-  position   : relative;
+  box-sizing: border-box;
+  margin: 0;
+  position: relative;
   font-weight: normal;
 }
 
 body {
-  height     : 100vh;
-  color      : var(--color-text);
-  background : var(--color-background-mute);
-  transition : color 0.5s, background-color 0.5s;
+  height: 100vh;
+  color: var(--color-text);
+  background-color: var(--color-background);
+  transition: color 0.5s, background-color 0.5s;
   line-height: 1.6;
-  font-family: Roboto, -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen, Ubuntu,
-    Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', Helvetica, sans-serif;
-  font-size              : 15px;
-  text-rendering         : optimizeLegibility;
-  -webkit-font-smoothing : antialiased;
+  font-family: Roboto, -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen,
+    Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', Helvetica,
+    sans-serif;
+  font-size: 15px;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow               : hidden;
+  overflow: hidden;
 }
 
 button {
   display: inline-block;
-  margin : 0;
+  margin: 0;
   padding: 0 1rem;
 
-  font-size     : 1rem;
-  font-weight   : 400;
-  line-height   : 2rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 2rem;
   text-transform: uppercase;
 
-  border       : none;
+  border: none;
   border-radius: 4px;
 
-  transition      : all .5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   background-color: transparent;
-  color           : var(--color-button);
+  color: var(--color-button);
 
   cursor: pointer;
 
-  &[a-btn=flat] {
+  &[a-btn='flat'] {
     background-color: var(--color-primary);
   }
 
-  &[a-btn=stroked] {
+  &[a-btn='stroked'] {
     border: 1px solid var(--color-primary);
   }
 
-  &[a-btn=raised] {
-    box-shadow      : var(--elevated);
+  &[a-btn='raised'] {
+    box-shadow: var(--elevated);
     background-color: var(--color-primary);
   }
 }
 
 article {
-  border-radius   : 2px;
-  box-shadow      : var(--elevated);
+  border-radius: 2px;
+  box-shadow: var(--elevated);
   background-color: var(--color-background-soft);
-  padding         : .5rem;
+  padding: 0.5rem;
 }
 
 p,
 span {
   margin-bottom: 0;
-  font-size    : 1rem;
-  font-weight  : 300;
-  line-height  : 1.6rem;
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1.6rem;
 }
 
 label {
@@ -160,36 +159,49 @@ label {
 
 input {
   line-height: 1.6rem;
-  padding    : 0 0.5rem;
-  margin     : 0;
-  border     : 0;
+  padding: 0 0.5rem;
+  margin: 0;
+  border: 0;
 
   background-color: var(--color-background-mute);
-  color           : var(--color-text);
-  caret-color     : var(--color-text);
+  color: var(--color-text);
+  caret-color: var(--color-text);
+}
+
+textarea {
+  background-color: transparent;
+  caret-color: var(--color-text);
+  color: var(--color-text);
+  outline: unset;
+  border: unset;
+  resize: none;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  padding: unset;
 }
 
 a {
   text-decoration: none;
-  color          : var(--color-button);
-  transition     : 0.4s;
+  color: var(--color-button);
+  transition: 0.4s;
 }
 
 @media (hover: hover) {
   a:hover {
-    color           : var(--color-button-hover);
+    color: var(--color-button-hover);
     background-color: var(--color-primary-soft);
   }
 
   button:hover {
-    color           : var(--color-button-hover);
-    background-color: rgba(0, 0, 0, .1);
+    color: var(--color-button-hover);
+    background-color: rgba(0, 0, 0, 0.1);
 
-    &[a-btn=flat] {
+    &[a-btn='flat'] {
       background-color: var(--color-primary-soft);
     }
 
-    &[a-btn=raised] {
+    &[a-btn='raised'] {
       background-color: var(--color-primary-soft);
     }
   }

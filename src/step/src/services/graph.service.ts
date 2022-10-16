@@ -93,7 +93,11 @@ export const graphService = defineStore('graph', {
       this.V[id].edges.forEach(eId => this.E.splice(eId, 1))
       this.V.splice(id, 1)
     },
-    connect<T>(tailId: IVertex['id'], headId?: IVertex['id'], value?: T) {
+    connect<T>(
+      tailId: IVertex['id'],
+      headId?: IVertex['id'],
+      value?: T
+    ): IVertex {
       const id = this.nextE()
       headId = headId || this.addV('')
       this.E[id] = {
@@ -106,6 +110,7 @@ export const graphService = defineStore('graph', {
         head = this.V[headId]
       tail.edges.push(id)
       head.edges.push(id)
+      return head
     },
     heads(v: IVertex | IVertex['id']) {
       const vertice = this.getV(v)

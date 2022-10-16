@@ -27,11 +27,10 @@ header {
 
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--gap-m);
   height: 3rem;
   padding: 0 var(--gap-s);
-
-  background-color: var(--color-background);
 
   nav {
     display: flex;
