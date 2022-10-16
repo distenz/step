@@ -1,21 +1,17 @@
 <script setup lang="ts">
 import { graphService } from '@/services/graph.service'
 import { computed, reactive } from 'vue'
-import DirectedSimpleGraphVertex from './DirectedSimpleGraphVertex.vue'
+import DirectedSimpleGraphVertex from '../components/DirectedSimpleGraphVertex.vue'
 
 const store = graphService(),
   logVertices = () => console.log(store.V),
   logEdges = () => console.log(store.E),
   orientation = computed(() =>
-    state.orientation === 'tailless' ? store.onlyHeadV : store.topDegreeV
+    state.orientation === 'tailless' ? store.onlyHeadV : [store.topDegreeV]
   ),
   state = reactive({
     orientation: 'tailless',
   })
-
-if (0 >= store.vertexCount) {
-  store.addV('')
-}
 </script>
 
 <template>
@@ -47,9 +43,9 @@ if (0 >= store.vertexCount) {
     <section class="graph__list">
       <DirectedSimpleGraphVertex
         v-for="v in orientation"
-        :key="v[0]"
-        :id="v[0]"
-        :path="[v[0]]"
+        :key="v.id"
+        :id="v.id"
+        :path="[v.id]"
       />
     </section>
   </section>
