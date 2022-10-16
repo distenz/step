@@ -3,7 +3,7 @@ version: '3.5'
 services:
 
   app:
-    user: $APP_UID
+    user: '1000'
     build:
       context: ./step
       dockerfile: Dockerfile
