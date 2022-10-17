@@ -4,13 +4,15 @@ import { RouterLink, RouterView } from 'vue-router'
 
 <template>
   <header>
-    <img
-      alt="Step logo"
-      class="logo"
-      src="@/assets/step-logo-5-1.svg"
-      width="32"
-      height="32"
-    />
+    <RouterLink to="/">
+      <img
+        alt="Step logo"
+        class="logo"
+        src="@/assets/step-logo-5-1.svg"
+        width="32"
+        height="32"
+      />
+    </RouterLink>
 
     <nav>
       <RouterLink to="/tree">Tree view</RouterLink>
