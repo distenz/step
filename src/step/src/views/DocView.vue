@@ -10,7 +10,8 @@ const cursor = ref<HTMLTextAreaElement | undefined>(),
   children = ref<Array<IVertex>>(store.heads(parent.value)),
   focused = ref<number>(
     (children.value[children.value.length - 1] || parent.value).id
-  )
+  ),
+  showHelp = ref(false)
 
 onMounted(() => {
   if (children.value.length === 0) {
@@ -55,6 +56,15 @@ function focusDown() {
 
 <template>
   <main class="host" tabindex="-1">
+    <button id="help-toggle" @click="showHelp = !showHelp">(?)</button>
+    <article v-show="showHelp" id="help" class="card">
+      <p>(Enter) New task</p>
+      <p>(Shift+Enter) Line break in same task</p>
+      <p>(Ctrl+Enter) Complete</p>
+      <p>(Ctrl+Up / Tab) Previous task</p>
+      <p>(Ctrl+Down / Shift+Tab) Next task</p>
+      <p>For removal, delete all text in task</p>
+    </article>
     <DocNode
       v-for="v in children"
       :key="v.id"
@@ -83,10 +93,21 @@ function focusDown() {
 
   justify-content: center;
 
-  // .host__node {
-  //   &:not(:last-of-type) {
-  //     border-bottom: 1px solid var(--color-border);
-  //   }
-  // }
+  position: relative;
+  z-index: 1;
+
+  #help-toggle {
+    inline-size: auto;
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    right: 0;
+  }
+  #help {
+    position: fixed;
+    z-index: 2;
+    top: 5ch;
+    right: 2ch;
+  }
 }
 </style>

@@ -32,13 +32,11 @@ export const graphService = defineStore('graph', {
     onlyHeadV: state => {
       const res: Array<IVertex> = []
       state.V.filter(isVertex).forEach(v => {
-        if (
-          v.edges
-            .map(eId => state.E[eId])
-            .filter(isEdge)
-            .filter(e => v.id === e.tailId).length === v.edges.length
-        )
-          res.push(v)
+        const heads = v.edges
+          .map(eId => state.E[eId])
+          .filter(isEdge)
+          .filter(e => v.id === e.tailId)
+        if (heads.length === v.edges.length) res.push(v)
       })
       return res
     },
