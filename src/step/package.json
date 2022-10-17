@@ -3,6 +3,7 @@
   "name": "step",
   "version": "0.2.0",
   "scripts": {
+    "install": "npm install && npm run dev",
     "dev": "vite --port 4200 --host 0.0.0.0",
     "build": "run-p type-check build-only",
     "preview": "run-p type-check build-only preview-only",
@@ -43,6 +44,6 @@
     "typescript": "~4.7.4",
     "vite": "^3.0.9",
     "vitest": "^0.23.0",
-    "vue-tsc": "^0.40.7"
+    "vue-tsc": "~1"
   }
 }

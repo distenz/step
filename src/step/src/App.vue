@@ -4,13 +4,15 @@ import { RouterLink, RouterView } from 'vue-router'
 
 <template>
   <header>
-    <img
-      alt="Step logo"
-      class="logo"
-      src="@/assets/step-logo-5-1.svg"
-      width="32"
-      height="32"
-    />
+    <RouterLink to="/">
+      <img
+        alt="Step logo"
+        class="logo"
+        src="@/assets/step-logo-5-1.svg"
+        width="32"
+        height="32"
+      />
+    </RouterLink>
 
     <nav>
       <RouterLink to="/tree">Tree view</RouterLink>
@@ -27,11 +29,10 @@ header {
 
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--gap-m);
   height: 3rem;
   padding: 0 var(--gap-s);
-
-  background-color: var(--color-background);
 
   nav {
     display: flex;
@@ -40,8 +41,14 @@ header {
     justify-content: flex-start;
     gap: var(--gap-m);
 
-    a.router-link-exact-active {
-      color: var(--color-button-hover);
+    a {
+      &.router-link-exact-active {
+        color: var(--color-button-hover);
+      }
+      & > .logo {
+        object-fit: contain;
+        object-position: center;
+      }
     }
   }
   & + * {

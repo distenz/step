@@ -10,7 +10,7 @@ const store = graphService(),
     state.orientation === 'tailless' ? store.onlyHeadV : [store.topDegreeV]
   ),
   state = reactive({
-    orientation: 'tailless',
+    orientation: 'hottest',
   })
 </script>
 

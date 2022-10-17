@@ -6,5 +6,4 @@ echo "Running Node.js in '${DOKERIZER_ENV:-development}' environment with '${@}'
 #
 export NODE_ENV="${DOKERIZER_ENV:-development}"
 
-npm update --include=dev &&\
 npm run $@ || exit 1

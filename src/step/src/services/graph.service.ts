@@ -31,14 +31,12 @@ export const graphService = defineStore('graph', {
     vertexCount: state => state.V.length,
     onlyHeadV: state => {
       const res: Array<IVertex> = []
-      state.V.forEach(v => {
-        if (
-          v.edges
-            .map(eId => state.E[eId])
-            .filter(isEdge)
-            .filter(e => v.id === e.tailId).length === v.edges.length
-        )
-          res.push(v)
+      state.V.filter(isVertex).forEach(v => {
+        const heads = v.edges
+          .map(eId => state.E[eId])
+          .filter(isEdge)
+          .filter(e => v.id === e.tailId)
+        if (heads.length === v.edges.length) res.push(v)
       })
       return res
     },
@@ -49,7 +47,7 @@ export const graphService = defineStore('graph', {
      */
     topDegreeV: (state): IVertex => {
       let max: IVertex | undefined = undefined
-      for (const v of state.V.values()) {
+      for (const v of state.V.filter(isVertex).values()) {
         max = !max ? v : v.edges.length > max.edges.length ? v : max
       }
       if (!isVertex(max)) throw new Error('graph has no vertices')
@@ -93,7 +91,11 @@ export const graphService = defineStore('graph', {
       this.V[id].edges.forEach(eId => this.E.splice(eId, 1))
       this.V.splice(id, 1)
     },
-    connect<T>(tailId: IVertex['id'], headId?: IVertex['id'], value?: T) {
+    connect<T>(
+      tailId: IVertex['id'],
+      headId?: IVertex['id'],
+      value?: T
+    ): IVertex {
       const id = this.nextE()
       headId = headId || this.addV('')
       this.E[id] = {
@@ -106,6 +108,7 @@ export const graphService = defineStore('graph', {
         head = this.V[headId]
       tail.edges.push(id)
       head.edges.push(id)
+      return head
     },
     heads(v: IVertex | IVertex['id']) {
       const vertice = this.getV(v)
