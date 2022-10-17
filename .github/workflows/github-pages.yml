@@ -1,9 +1,9 @@
-name: STEP client ci
+name: Client preview
 
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: ["main"]
+    branches: [$default-branch]
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
@@ -43,10 +43,12 @@ jobs:
 
       - name: Setup Pages
         uses: actions/configure-pages@v2
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
           path: "./src/step/dist"
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
