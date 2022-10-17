@@ -18,7 +18,9 @@ jobs:
         env:
           NODE_ENV: production
 
-      - run: npm run build
+      - run: |
+          cd src/step
+          npm run build
 
       - name: Init new repo in dist folder and commit generated files
         run: |
