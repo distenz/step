@@ -20,8 +20,7 @@ jobs:
 
       - run: |
           cd src/step
-          npm i -g npm-run-all
-          npm run build
+          npm run build-only
 
       - name: Init new repo in dist folder and commit generated files
         run: |
