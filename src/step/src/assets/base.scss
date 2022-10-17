@@ -139,10 +139,13 @@ button {
 }
 
 article {
-  border-radius: 2px;
-  box-shadow: var(--elevated);
-  background-color: var(--color-background-soft);
-  padding: 0.5rem;
+
+  &.card {
+    border-radius: 2px;
+    box-shadow: var(--elevated);
+    background-color: var(--color-background-soft);
+    padding: 0.5rem;
+  }
 }
 
 p,
