@@ -31,7 +31,7 @@ export const graphService = defineStore('graph', {
     vertexCount: state => state.V.length,
     onlyHeadV: state => {
       const res: Array<IVertex> = []
-      state.V.forEach(v => {
+      state.V.filter(isVertex).forEach(v => {
         if (
           v.edges
             .map(eId => state.E[eId])
@@ -49,7 +49,7 @@ export const graphService = defineStore('graph', {
      */
     topDegreeV: (state): IVertex => {
       let max: IVertex | undefined = undefined
-      for (const v of state.V.values()) {
+      for (const v of state.V.filter(isVertex).values()) {
         max = !max ? v : v.edges.length > max.edges.length ? v : max
       }
       if (!isVertex(max)) throw new Error('graph has no vertices')
