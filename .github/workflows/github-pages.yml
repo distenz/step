@@ -17,8 +17,7 @@ jobs:
           node-version: "16"
         env:
           NODE_ENV: production
-
-      - run: |
+        run: |
           cd src/step
           npm install vite
           npm run build-only
@@ -36,6 +35,6 @@ jobs:
         uses: ad-m/github-push-action@v0.6.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: main:github-pages
+          branch: main-github-pages
           force: true
           directory: src/step/dist
