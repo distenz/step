@@ -20,6 +20,7 @@ jobs:
 
       - run: |
           cd src/step
+          npm install vite
           npm run build-only
 
       - name: Init new repo in dist folder and commit generated files
