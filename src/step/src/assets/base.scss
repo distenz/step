@@ -188,6 +188,8 @@ a {
   text-decoration: none;
   color: var(--color-button);
   transition: 0.4s;
+  display: flex;
+  padding-inline: .25ch;
 }
 
 @media (hover: hover) {

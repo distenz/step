@@ -110,14 +110,17 @@ article {
   padding-inline: 0.5ch;
   padding-block: 0.25ch;
 
-  transition: background-color 0.1s linear;
+  // transition: background-color 0.1s linear;
   border-radius: 0.25ch;
 
   &:hover {
     background-color: hsl(0, 0%, 100%, 0.05);
 
     & > label {
-      opacity: 1;
+      // opacity: 1;
+      & > input {
+        display: block;
+      }
     }
   }
 
@@ -125,14 +128,17 @@ article {
     display: flex;
     align-self: flex-start;
     gap: 0.25ch;
-    opacity: 0;
+    // opacity: 0;
+    width: 1.6ch;
 
-    transition: opacity 0.1s linear;
+    // transition: opacity 0.1s linear;
 
     block-size: 1.2rem * 1.4;
 
     & > input {
       background-color: transparent;
+      width: 1.6ch;
+      display: none;
     }
   }
 }

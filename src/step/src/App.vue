@@ -41,8 +41,14 @@ header {
     justify-content: flex-start;
     gap: var(--gap-m);
 
-    a.router-link-exact-active {
-      color: var(--color-button-hover);
+    a {
+      &.router-link-exact-active {
+        color: var(--color-button-hover);
+      }
+      & > .logo {
+        object-fit: contain;
+        object-position: center;
+      }
     }
   }
   & + * {
