@@ -1,0 +1,42 @@
+name: STEP client ci
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    
+    - uses: actions/checkout@v3
+        
+    - name: Generate static Vite files
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+        
+    - env: 
+        NODE_ENV: production
+        
+    - run: npm run build
+
+    - name: Init new repo in dist folder and commit generated files
+      run: |
+        cd src/step/dist
+        git init
+        git add -A
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git commit -m 'Deploy distribution to GitHub Pages'
+
+    - name: Force push to destination branch
+      uses: ad-m/github-push-action@v0.6.0
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: main:github-pages
+        force: true
+        directory: src/step/dist
