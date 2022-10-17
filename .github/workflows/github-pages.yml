@@ -9,14 +9,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout source
+        uses: actions/checkout@v3
 
-      - name: Generate static Vite files
+      - name: Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: "16"
         env:
           NODE_ENV: production
+        
+      - name: Generate static Vite files
         run: |
           cd src/step
           npm install vite
