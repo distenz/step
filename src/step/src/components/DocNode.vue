@@ -1,16 +1,22 @@
 <script setup="" lang="ts">
 import type { IVertex } from '@/utility/vertex.interface'
-import { onMounted, onUpdated, nextTick, ref, watch, type Ref } from 'vue'
-
+import { onMounted, onUpdated, ref } from 'vue'
+/**
+ * @todo insert new node under previous index (currently only end of child list is supported)
+ */
 const props = defineProps<{
-    focused: number
+    focused: {
+      id: number
+      offset: 'start' | 'end' | number
+      direction: 'start' | 'end'
+    }
     vertex: IVertex
   }>(),
   emit = defineEmits<{
     (e: 'focus'): void
     (e: 'blur'): void
-    (e: 'up'): void
-    (e: 'down'): void
+    (e: 'up', offset: number): void
+    (e: 'down', offset: number): void
     (e: 'send', v: IVertex, c: string): void
     (e: 'remove', v: IVertex): void
   }>(),
@@ -26,18 +32,26 @@ onMounted(() => {
 onUpdated(() => focusIfNeeded())
 
 function focusIfNeeded() {
-  if (props.focused === props.vertex.id) {
+  if (props.focused.id === props.vertex.id) {
+    console.log('focused', props.vertex, props.focused)
     focus()
-    if (node.value?.hasChildNodes()) {
+    if (node.value?.hasChildNodes() && props.focused.offset !== 'start') {
       const selection = window.getSelection()
       if (selection) {
-        const range = document.createRange()
-        const lastChild: Text = <Text>node.value.lastChild
-        if (lastChild) {
-          range.setStart(lastChild, lastChild.length)
-          range.setEnd(lastChild, lastChild.length)
+        const r = document.createRange()
+        const child =
+          props.focused.direction === 'start'
+            ? node.value.firstChild
+            : node.value.lastChild
+        if (child instanceof Text) {
+          const offset =
+            typeof props.focused.offset === 'number'
+              ? Math.min(props.focused.offset, child.length)
+              : child.length
+          r.setStart(child, offset)
+          r.setEnd(child, offset)
           selection.removeAllRanges()
-          selection.addRange(range)
+          selection.addRange(r)
         }
       }
     }
@@ -45,16 +59,22 @@ function focusIfNeeded() {
 }
 
 function focus() {
-  node.value?.focus()
+  try {
+    if (!node.value) throw new Error('can not focus, no node in dom')
+    node.value.focus()
+  } catch (e) {
+    console.error(e)
+  }
 }
 function send() {
   if (node.value) {
     emit('send', props.vertex, node.value.innerHTML)
   }
 }
-function remove() {
+function remove(e: Event) {
   if (node.value) {
-    if (node.value.innerText === '') {
+    if (node.value.innerText.replace(/\n/, '') === '') {
+      e.preventDefault()
       emit('remove', props.vertex)
     }
   }
@@ -62,11 +82,53 @@ function remove() {
 function toggle() {
   done.value = !done.value
 }
-function up() {
-  emit('up')
+function up(e: KeyboardEvent) {
+  const selection = window.getSelection()
+  if (
+    !node.value?.firstChild ||
+    selection?.focusNode === node.value?.firstChild
+  ) {
+    e.preventDefault()
+    emit('up', selection?.focusOffset ?? 0)
+  }
 }
-function down() {
-  emit('down')
+function down(e: KeyboardEvent) {
+  const selection = window.getSelection()
+  if (
+    !node.value?.lastChild ||
+    selection?.focusNode === node.value?.lastChild
+  ) {
+    e.preventDefault()
+    emit('down', selection?.focusOffset ?? 0)
+  }
+}
+function left(e: KeyboardEvent) {
+  const firstChild = node.value?.firstChild,
+    selection = window.getSelection()
+  if (
+    !firstChild ||
+    firstChild instanceof HTMLBRElement ||
+    (firstChild instanceof Text &&
+      selection?.focusNode === firstChild &&
+      selection?.focusOffset === 0)
+  ) {
+    e.preventDefault()
+    emit('up', selection?.focusOffset ?? 0)
+  }
+}
+function right(e: KeyboardEvent) {
+  const lastChild = node.value?.lastChild,
+    selection = window.getSelection()
+  if (
+    !lastChild ||
+    lastChild instanceof HTMLBRElement ||
+    (lastChild instanceof Text &&
+      selection?.focusNode === lastChild &&
+      lastChild.length === selection?.focusOffset)
+  ) {
+    e.preventDefault()
+    emit('down', selection?.focusOffset ?? 0)
+  }
 }
 </script>
 
@@ -85,14 +147,17 @@ function down() {
       autocomplete="off"
       contentEditable="true"
       placeholder="Typy type"
+      autofocus
       tabindex="0"
       @focus="$emit('focus')"
       @blur="$emit('blur')"
       @keydown.enter.exact.prevent="send"
       @keydown.delete="remove"
       @keydown.ctrl.enter.exact.prevent="toggle"
-      @keydown.ctrl.up.exact.prevent="up"
-      @keydown.ctrl.down.exact.prevent="down"
+      @keydown.up.exact="up"
+      @keydown.down.exact="down"
+      @keydown.left.exact="left"
+      @keydown.right.exact="right"
     ></p>
   </article>
 </template>

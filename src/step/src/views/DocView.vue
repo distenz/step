@@ -1,16 +1,26 @@
 <script setup lang="ts">
 import { graphService } from '@/services/graph.service'
 import type { IVertex } from '@/utility/vertex.interface'
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import DocNode from '../components/DocNode.vue'
 
 const cursor = ref<HTMLTextAreaElement | undefined>(),
   store = graphService(),
   parent = ref(store.V[0]),
-  children = ref<Array<IVertex>>(store.heads(parent.value)),
-  focused = ref<number>(
-    (children.value[children.value.length - 1] || parent.value).id
-  ),
+  children = ref<Array<IVertex>>(store.heads(parent.value))
+if (!children.value.length) {
+  next(0, false)
+}
+const lastChild = computed(() => children.value[children.value.length - 1]),
+  focused = ref<{
+    id: number
+    offset: 'start' | 'end' | number
+    direction: 'start' | 'end'
+  }>({
+    id: lastChild.value.id,
+    offset: 'end',
+    direction: 'start',
+  }),
   showHelp = ref(false)
 
 onMounted(() => {
@@ -18,51 +28,59 @@ onMounted(() => {
     next()
   }
 })
-watch(
-  () => children.value[children.value.length - 1],
-  nextLast => (focused.value = nextLast.id)
-)
+
 function save(v: IVertex, c: string) {
-  console.log('save', v)
   const vIdx = children.value.findIndex(vf => vf.id === v.id)
   children.value[vIdx].value = c
 
-  if (children.value[children.value.length - 1].value) {
-    next()
-  }
+  next(vIdx + 1)
 }
 function remove(v: IVertex) {
-  children.value.splice(
-    children.value.findIndex(fv => fv.id === v.id),
-    1
-  )
+  const cIdx = children.value.findIndex(fv => fv.id === v.id)
+  children.value.splice(cIdx, 1)
   store.removeV(v.id)
+  focused.value = {
+    id: children.value[Math.max(cIdx - 1, 0)].id,
+    offset: 'end',
+    direction: 'end',
+  }
 }
-
-function next() {
+function next(offset?: number, focus = true) {
   const newV = store.connect(parent.value.id)
-  // focused.value = newV.id
-  children.value.push(newV)
+  children.value.splice(offset || children.value.length, 0, newV)
+  if (focus) focused.value = { id: newV.id, offset: 'end', direction: 'end' }
 }
-function focusUp() {
-  const fVIdx = children.value.findIndex(fv => fv.id === focused.value)
-  focused.value = children.value[fVIdx - 1]?.id || parent.value.id
+function focusUp(offset: number) {
+  const fVIdx = children.value.findIndex(fv => fv.id === focused.value.id)
+  if (children.value[fVIdx - 1]?.id) {
+    focused.value = {
+      id: children.value[fVIdx - 1].id,
+      offset,
+      direction: 'end',
+    }
+  }
 }
-function focusDown() {
-  const fVIdx = children.value.findIndex(fv => fv.id === focused.value)
-  focused.value = children.value[fVIdx + 1]?.id || parent.value.id
+function focusDown(offset: number) {
+  const fVIdx = children.value.findIndex(fv => fv.id === focused.value.id)
+  if (children.value[fVIdx + 1]?.id) {
+    focused.value = {
+      id: children.value[fVIdx + 1].id,
+      offset,
+      direction: 'start',
+    }
+  }
 }
 </script>
 
 <template>
-  <main class="host" tabindex="-1">
+  <main class="host">
     <button id="help-toggle" @click="showHelp = !showHelp">(?)</button>
     <article v-show="showHelp" id="help" class="card">
       <p>(Enter) New task</p>
       <p>(Shift+Enter) Line break in same task</p>
       <p>(Ctrl+Enter) Complete</p>
-      <p>(Ctrl+Up / Tab) Previous task</p>
-      <p>(Ctrl+Down / Shift+Tab) Next task</p>
+      <p>(Up / Tab) Previous task</p>
+      <p>(Down / Shift+Tab) Next task</p>
       <p>For removal, delete all text in task</p>
     </article>
     <DocNode
@@ -73,7 +91,7 @@ function focusDown() {
       :vertex="v"
       @send="save"
       @remove="remove"
-      @focus="focused = v.id"
+      @focus="focused.id = v.id"
       @up="focusUp"
       @down="focusDown"
     ></DocNode>
