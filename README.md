@@ -1,10 +1,13 @@
 # STEP
 
-## main goals
+[![Client preview](https://github.com/distenz/step/actions/workflows/github-pages.yml/badge.svg)](https://github.com/distenz/step/actions/workflows/github-pages.yml)
+
+## goals
 1. graph information storage user interface
-   1. "Explore": a way to display some relevant vertices about the graph. goal being to give anchors to users to be able to orient themselves.
-   2. "Find": relevant search methods to achieve the same as 1.1.
-2. bootstrapping step management with step.
-3. completely serverless.
-   1. no server logic.
-   2. only offer interface to auth and store remote for multi device data sharing capability.
+   1. an input method, that is more or less intuitive for all computer literate people
+      1. this gui have to output a graph in order to be able to describe any user input
+      2. predefined ontology only consists of traits
+   2. an overview method, where the users can observe all of their data. this might or might not be the input gui
+   3. a filtering solution for minimal input navigation
+2. explore p2p or other serverless methodologies
+   1. maybe provide and interface for auth and storage in a way that the users own their data
