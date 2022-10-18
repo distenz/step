@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
+/*global __APP_VERSION__*/
+const version = __APP_VERSION__
 </script>
 
 <template>
   <header>
-    <RouterLink to="/">
+    <figure to="/" id="hero">
       <img
         alt="Step logo"
         class="logo"
@@ -12,12 +14,9 @@ import { RouterLink, RouterView } from 'vue-router'
         width="32"
         height="32"
       />
-    </RouterLink>
-
-    <nav>
-      <RouterLink to="/tree">Tree view</RouterLink>
-      <RouterLink to="/cursor">Cursor view</RouterLink>
-    </nav>
+      <h1 id="title">STEP</h1>
+      <small id="version"> v{{ version }} </small>
+    </figure>
   </header>
 
   <RouterView />
@@ -25,14 +24,37 @@ import { RouterLink, RouterView } from 'vue-router'
 
 <style scoped lang="scss">
 header {
+  box-sizing: border-box;
   grid-area: header;
 
   display: flex;
   align-items: center;
   justify-content: center;
   gap: var(--gap-m);
-  height: 3rem;
-  padding: 0 var(--gap-s);
+  padding: var(--gap-s);
+
+  #hero {
+    display: grid;
+    grid-template-areas: ' logo title version';
+
+    gap: 1ch;
+    box-sizing: border-box;
+
+    & > .logo {
+      grid-area: logo;
+    }
+    & > #title {
+      font-size: 2rem;
+      line-height: 1;
+      grid-area: title;
+    }
+    & > #version {
+      grid-area: version;
+      align-self: start;
+      line-height: 1.4;
+      font-size: 1rem;
+    }
+  }
 
   nav {
     display: flex;

@@ -90,6 +90,7 @@
 }
 
 body {
+  box-sizing: border-box;
   height: 100vh;
   color: var(--color-text);
   background-color: var(--color-background);
