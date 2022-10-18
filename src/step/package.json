@@ -3,7 +3,7 @@
   "name": "step",
   "version": "0.3.1",
   "scripts": {
-    "install": "npm install && npm run dev",
+    "update": "npm update --include=dev",
     "dev": "vite --port 4200 --host 0.0.0.0",
     "build": "run-p type-check build-only",
     "preview": "run-p type-check build-only preview-only",
