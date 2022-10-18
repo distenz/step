@@ -77,7 +77,7 @@ function focusDown(offset: number) {
     <button id="help-toggle" @click="showHelp = !showHelp">(?)</button>
     <article v-show="showHelp" id="help" class="card">
       <h3>
-        Whats on Your mind? <br />
+        What's on Your mind? <br />
         Write it down.
       </h3>
       <p>(Enter) New task</p>
