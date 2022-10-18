@@ -76,12 +76,16 @@ function focusDown(offset: number) {
   <main class="host">
     <button id="help-toggle" @click="showHelp = !showHelp">(?)</button>
     <article v-show="showHelp" id="help" class="card">
+      <h3>
+        Whats on Your mind? <br />
+        Write it down.
+      </h3>
       <p>(Enter) New task</p>
       <p>(Shift+Enter) Line break in same task</p>
-      <p>(Ctrl+Enter) Complete</p>
-      <p>(Up / Tab) Previous task</p>
-      <p>(Down / Shift+Tab) Next task</p>
-      <p>For removal, delete all text in task</p>
+      <p>(Ctrl+Enter) Complete current task</p>
+      <p>(Up / Shift+Tab) Previous task</p>
+      <p>(Down / Tab) Next task</p>
+      <p>Delete all text in task for removal</p>
     </article>
     <DocNode
       v-for="v in children"
