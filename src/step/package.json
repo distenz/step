@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/package.json",
   "name": "step",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "scripts": {
     "install": "npm install && npm run dev",
     "dev": "vite --port 4200 --host 0.0.0.0",
