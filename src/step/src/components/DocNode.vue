@@ -33,7 +33,6 @@ onUpdated(() => focusIfNeeded())
 
 function focusIfNeeded() {
   if (props.focused.id === props.vertex.id) {
-    console.log('focused', props.vertex, props.focused)
     focus()
     if (node.value?.hasChildNodes() && props.focused.offset !== 'start') {
       const selection = window.getSelection()

@@ -2,6 +2,8 @@
 
 [![Client preview](https://github.com/distenz/step/actions/workflows/github-pages.yml/badge.svg)](https://github.com/distenz/step/actions/workflows/github-pages.yml)
 
+[Live Preview](https://distenz.github.io/step/)
+
 ## goals
 1. graph information storage user interface
    1. an input method, that is more or less intuitive for all computer literate people
