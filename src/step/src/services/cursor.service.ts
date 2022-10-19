@@ -1,7 +1,6 @@
 import type { IVertex } from '@/utility/vertex.interface'
 import { defineStore } from 'pinia'
 import { graphService } from './graph.service'
-import { packageService } from './package.service'
 
 export interface ICursor {
   current: IVertex | null
@@ -33,8 +32,6 @@ export const cursorService = defineStore('cursor', {
   },
   persist: {
     enabled: true,
-    strategies: [
-      { key: packageService().storagePrefix + 'cursor', storage: localStorage },
-    ],
+    strategies: [{ key: __APP_NAME__ + '__cursor', storage: localStorage }],
   },
 })

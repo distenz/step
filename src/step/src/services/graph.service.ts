@@ -3,7 +3,6 @@ import type { IEdge } from '@/utility/edge.interface'
 import { isVertex } from '@/utility/vertex.guard'
 import type { IVertex } from '@/utility/vertex.interface'
 import { defineStore } from 'pinia'
-import { packageService } from './package.service'
 
 export interface IGraph {
   V: Array<IVertex>
@@ -131,8 +130,6 @@ export const graphService = defineStore('graph', {
   },
   persist: {
     enabled: true,
-    strategies: [
-      { key: packageService().storagePrefix + 'graph', storage: localStorage },
-    ],
+    strategies: [{ key: __APP_NAME__ + '__graph', storage: localStorage }],
   },
 })
