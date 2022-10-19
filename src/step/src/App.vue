@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
+import { tripleStore } from '@/stores/triple'
+import { useAsyncState } from '@vueuse/core'
 /*global __APP_VERSION__*/
 const version = __APP_VERSION__
+const store = tripleStore(),
+  { state } = useAsyncState(store.get(), [])
 </script>
 
 <template>
@@ -18,6 +22,8 @@ const version = __APP_VERSION__
       <small id="version"> v{{ version }} </small>
     </figure>
   </header>
+
+  {{ state }}
 
   <RouterView />
 </template>
