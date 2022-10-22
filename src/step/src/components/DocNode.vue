@@ -1,51 +1,53 @@
 <script setup="" lang="ts">
-import type { IVertex } from '@/utility/vertex.interface'
-import { onMounted, onUpdated, ref } from 'vue'
-/**
- * @todo insert new node under previous index (currently only end of child list is supported)
- */
+import type { IDocumentNode, ITraversalData } from '@/global/types'
+import { onMounted, ref, watch } from 'vue'
 const props = defineProps<{
-    focused: {
-      id: number
-      offset: 'start' | 'end' | number
-      direction: 'start' | 'end'
-    }
-    vertex: IVertex
+    traverse: ITraversalData
+    focused: boolean
+    node: IDocumentNode
   }>(),
   emit = defineEmits<{
     (e: 'focus'): void
     (e: 'blur'): void
     (e: 'up', offset: number): void
     (e: 'down', offset: number): void
-    (e: 'send', v: IVertex, c: string): void
-    (e: 'remove', v: IVertex): void
+    (e: 'send', node: IDocumentNode, c: string): void
+    (e: 'remove', node: IDocumentNode): void
   }>(),
+  // focused = ref(props.focused),
   node = ref<HTMLParagraphElement | undefined>(),
   done = ref<boolean>(false)
 
 onMounted(() => {
   if (node.value) {
-    node.value.innerHTML = props.vertex?.value ?? ''
+    node.value.innerHTML = props.node?.value ?? ''
+    if (props.focused) {
+      focus()
+    }
   }
-  focusIfNeeded()
 })
-onUpdated(() => focusIfNeeded())
-
-function focusIfNeeded() {
-  if (props.focused.id === props.vertex.id) {
+watch(
+  () => props.focused,
+  () => {
     focus()
-    if (node.value?.hasChildNodes() && props.focused.offset !== 'start') {
+  }
+)
+
+function focus() {
+  if (node.value && props.focused) {
+    node.value.focus()
+    if (node.value?.hasChildNodes() && props.traverse.offset !== 'start') {
       const selection = window.getSelection()
       if (selection) {
         const r = document.createRange()
         const child =
-          props.focused.direction === 'start'
+          props.traverse.direction === 'start'
             ? node.value.firstChild
             : node.value.lastChild
         if (child instanceof Text) {
           const offset =
-            typeof props.focused.offset === 'number'
-              ? Math.min(props.focused.offset, child.length)
+            typeof props.traverse.offset === 'number'
+              ? Math.min(props.traverse.offset, child.length)
               : child.length
           r.setStart(child, offset)
           r.setEnd(child, offset)
@@ -57,24 +59,16 @@ function focusIfNeeded() {
   }
 }
 
-function focus() {
-  try {
-    if (!node.value) throw new Error('can not focus, no node in dom')
-    node.value.focus()
-  } catch (e) {
-    console.error(e)
-  }
-}
 function send() {
   if (node.value) {
-    emit('send', props.vertex, node.value.innerHTML)
+    emit('send', props.node, node.value.innerHTML)
   }
 }
 function remove(e: Event) {
   if (node.value) {
     if (node.value.innerText.replace(/\n/, '') === '') {
       e.preventDefault()
-      emit('remove', props.vertex)
+      emit('remove', props.node)
     }
   }
 }
@@ -132,9 +126,9 @@ function right(e: KeyboardEvent) {
 </script>
 
 <template>
-  <article>
-    <label :for="`v-${props.vertex.id}`">
-      <input :id="`${props.vertex.id}`" type="checkbox" v-model="done" />
+  <article :id="props.node.id">
+    <label :for="`v-${props.node.id}`">
+      <input :id="`${props.node.id}`" type="checkbox" v-model="done" />
     </label>
     <p
       name="node"

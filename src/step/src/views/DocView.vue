@@ -1,26 +1,21 @@
 <script setup lang="ts">
-import { graphService } from '@/services/graph.service'
-import type { IVertex } from '@/utility/vertex.interface'
+import type { IDocumentNode, ITraversalData } from '@/global/types'
+import { nanoid } from 'nanoid'
+
 import { computed, onMounted, ref } from 'vue'
 import DocNode from '../components/DocNode.vue'
 
 const cursor = ref<HTMLTextAreaElement | undefined>(),
-  store = graphService(),
-  parent = ref(store.V[0]),
-  children = ref<Array<IVertex>>(store.heads(parent.value))
+  children = ref<Array<IDocumentNode>>([])
 if (!children.value.length) {
   next(0, false)
 }
 const lastChild = computed(() => children.value[children.value.length - 1]),
-  focused = ref<{
-    id: number
-    offset: 'start' | 'end' | number
-    direction: 'start' | 'end'
-  }>({
-    id: lastChild.value.id,
+  traversal = ref<ITraversalData>({
     offset: 'end',
     direction: 'start',
   }),
+  focused = ref<IDocumentNode['id']>(lastChild.value.id),
   showHelp = ref(false)
 
 onMounted(() => {
@@ -29,42 +24,44 @@ onMounted(() => {
   }
 })
 
-function save(v: IVertex, c: string) {
+function save(v: IDocumentNode, c: string) {
   const vIdx = children.value.findIndex(vf => vf.id === v.id)
   children.value[vIdx].value = c
 
   next(vIdx + 1)
 }
-function remove(v: IVertex) {
+function remove(v: IDocumentNode) {
   const cIdx = children.value.findIndex(fv => fv.id === v.id)
   children.value.splice(cIdx, 1)
-  store.removeV(v.id)
-  focused.value = {
-    id: children.value[Math.max(cIdx - 1, 0)].id,
+  focused.value = children.value[Math.max(cIdx - 1, 0)].id
+  traversal.value = {
     offset: 'end',
     direction: 'end',
   }
 }
 function next(offset?: number, focus = true) {
-  const newV = store.connect(parent.value.id)
+  const newV = { id: nanoid(), value: '' }
   children.value.splice(offset || children.value.length, 0, newV)
-  if (focus) focused.value = { id: newV.id, offset: 'end', direction: 'end' }
+  if (focus) {
+    focused.value = newV.id
+    traversal.value = { offset: 'end', direction: 'end' }
+  }
 }
 function focusUp(offset: number) {
-  const fVIdx = children.value.findIndex(fv => fv.id === focused.value.id)
+  const fVIdx = children.value.findIndex(fv => fv.id === focused.value)
   if (children.value[fVIdx - 1]?.id) {
-    focused.value = {
-      id: children.value[fVIdx - 1].id,
+    focused.value = children.value[fVIdx - 1].id
+    traversal.value = {
       offset,
       direction: 'end',
     }
   }
 }
 function focusDown(offset: number) {
-  const fVIdx = children.value.findIndex(fv => fv.id === focused.value.id)
+  const fVIdx = children.value.findIndex(fv => fv.id === focused.value)
   if (children.value[fVIdx + 1]?.id) {
-    focused.value = {
-      id: children.value[fVIdx + 1].id,
+    focused.value = children.value[fVIdx + 1].id
+    traversal.value = {
       offset,
       direction: 'start',
     }
@@ -74,6 +71,7 @@ function focusDown(offset: number) {
 
 <template>
   <main class="host">
+    {{ focused }}
     <button id="help-toggle" @click="showHelp = !showHelp">(?)</button>
     <article v-show="showHelp" id="help" class="card">
       <h3>
@@ -91,11 +89,12 @@ function focusDown(offset: number) {
       v-for="v in children"
       :key="v.id"
       ref="cursor"
-      :focused="focused"
-      :vertex="v"
+      :focused="v.id === focused"
+      :traverse="traversal"
+      :node="v"
       @send="save"
       @remove="remove"
-      @focus="focused.id = v.id"
+      @focus="focused = v.id"
       @up="focusUp"
       @down="focusDown"
     ></DocNode>

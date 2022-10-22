@@ -6,7 +6,7 @@ import router from './router'
 import piniaPersist from 'pinia-plugin-persist'
 
 import './assets/main.scss'
-import { consoleErrorMiddleware } from './utility/console-error.middleware'
+import { consoleErrorMiddleware } from './helpers/console-error.middleware'
 
 const app = createApp(App)
 

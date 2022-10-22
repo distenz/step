@@ -17,6 +17,7 @@
     "debug": "sleep infinity"
   },
   "dependencies": {
+    "nanoid": "^4.0.0",
     "pinia": "^2.0.21",
     "pinia-plugin-persist": "^1.0.0",
     "vue": "^3.2.38",

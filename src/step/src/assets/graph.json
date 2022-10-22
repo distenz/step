@@ -1,0 +1,18 @@
+[
+  ["Alpha", "task", true],
+  ["Beta", "task", true],
+  ["Gamma", "task", true],
+  ["Delta", "task", true],
+  ["Alpha", "subtask", "DO#1"],
+  ["Alpha", "subtask", "DO#2"],
+  ["Alpha", "subtask", "DO#3"],
+  ["DO#1", "task", true],
+  ["DO#2", "task", true],
+  ["DO#3", "task", true],
+  ["DO#2", "subtask", "imp#1-1"],
+  ["DO#2", "subtask", "imp#1-2"],
+  ["imp#1-1", "task", true],
+  ["imp#1-2", "task", true],
+  ["imp#1-1", "subtask", "DO#2"],
+  ["DO#3", "subtask", "imp#1-2"]
+]
