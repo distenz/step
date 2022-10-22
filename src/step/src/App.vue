@@ -1,11 +1,25 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
 import { tripleStore } from '@/stores/triple'
-import { useAsyncState } from '@vueuse/core'
+import { watch } from 'vue'
 /*global __APP_VERSION__*/
 const version = __APP_VERSION__
-const store = tripleStore(),
-  { state } = useAsyncState(store.get(), [])
+const store = tripleStore()
+
+// const { state } = useAsyncState(store.get(), [])
+
+watch(
+  () => store.ready,
+  () => push()
+)
+
+function push() {
+  store.push({
+    1: {
+      contains: { text: 'this is the first triple task' },
+    },
+  })
+}
 </script>
 
 <template>
@@ -22,8 +36,6 @@ const store = tripleStore(),
       <small id="version"> v{{ version }} </small>
     </figure>
   </header>
-
-  {{ state }}
 
   <RouterView />
 </template>

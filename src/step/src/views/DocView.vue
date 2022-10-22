@@ -1,16 +1,37 @@
 <script setup lang="ts">
-import { graphService } from '@/services/graph.service'
+import { tripleStore } from '@/stores/triple'
+import type { IDehidratedTriple } from '@/utility/triple.utility'
 import type { IVertex } from '@/utility/vertex.interface'
-import { computed, onMounted, ref } from 'vue'
+import { useAsyncState } from '@vueuse/core'
+import { computed, onMounted, ref, watch } from 'vue'
 import DocNode from '../components/DocNode.vue'
 
 const cursor = ref<HTMLTextAreaElement | undefined>(),
-  store = graphService(),
-  parent = ref(store.V[0]),
-  children = ref<Array<IVertex>>(store.heads(parent.value))
-if (!children.value.length) {
+  store = tripleStore(),
+  parent = ref<IDehidratedTriple>(),
+  children = ref<Array<IDehidratedTriple>>()
+if (!children.value) {
   next(0, false)
 }
+
+watch(
+  () => store.ready,
+  async next => {
+    if (next) {
+      parent.value = await store.get('OPS', ['root', 'is', 'root'])
+    }
+  }
+)
+watch(parent, async next => {
+  if (next?.object) {
+    const children = await store.list('OPX', [next.object, 'hasSubTask'])
+    if (!children) throw new Error() {
+      
+    }
+    children.map(triple => triple.subject)
+  }
+})
+
 const lastChild = computed(() => children.value[children.value.length - 1]),
   focused = ref<{
     id: number
