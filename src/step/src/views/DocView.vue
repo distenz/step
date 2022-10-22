@@ -71,7 +71,6 @@ function focusDown(offset: number) {
 
 <template>
   <main class="host">
-    {{ focused }}
     <button id="help-toggle" @click="showHelp = !showHelp">(?)</button>
     <article v-show="showHelp" id="help" class="card">
       <h3>
