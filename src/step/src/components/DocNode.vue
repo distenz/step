@@ -136,7 +136,10 @@ function right(e: KeyboardEvent) {
       id="node"
       ref="node"
       class="host__node"
-      :class="{ 'host__node--done': done }"
+      :class="{
+        'host__node--done': done,
+        'host__node--focused': props.focused,
+      }"
       autocomplete="off"
       contentEditable="true"
       placeholder="Typy type"
@@ -180,6 +183,10 @@ article {
         display: block;
       }
     }
+
+    & > .host__node::before {
+      display: none;
+    }
   }
 
   & > label {
@@ -216,6 +223,14 @@ article {
 
   &.host__node--done {
     color: var(--color-border);
+  }
+
+  &.host__node--focused {
+    &::before {
+      content: '$';
+      position: absolute;
+      margin-inline-start: -2ch;
+    }
   }
 }
 </style>
