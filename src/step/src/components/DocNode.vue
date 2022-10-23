@@ -1,26 +1,27 @@
 <script setup="" lang="ts">
 import type { IDocumentNode, ITraversalData } from '@/global/types'
+import { nodeStore } from '@/stores/node.store'
 import { onMounted, ref, watch } from 'vue'
 const props = defineProps<{
     traverse: ITraversalData
     focused: boolean
-    node: IDocumentNode
+    nodeId: IDocumentNode['id']
   }>(),
   emit = defineEmits<{
     (e: 'focus'): void
     (e: 'blur'): void
     (e: 'up', offset: number): void
     (e: 'down', offset: number): void
-    (e: 'send', node: IDocumentNode, c: string): void
+    (e: 'send', node: IDocumentNode): void
     (e: 'remove', node: IDocumentNode): void
   }>(),
-  // focused = ref(props.focused),
-  node = ref<HTMLParagraphElement | undefined>(),
-  done = ref<boolean>(false)
+  nodes = nodeStore(),
+  data = ref(nodes.map[props.nodeId]),
+  node = ref<HTMLParagraphElement | undefined>()
 
 onMounted(() => {
   if (node.value) {
-    node.value.innerHTML = props.node?.value ?? ''
+    node.value.innerHTML = data.value.value
     if (props.focused) {
       focus()
     }
@@ -32,7 +33,6 @@ watch(
     focus()
   }
 )
-
 function focus() {
   if (node.value && props.focused) {
     node.value.focus()
@@ -58,77 +58,55 @@ function focus() {
     }
   }
 }
-
 function send() {
   if (node.value) {
-    emit('send', props.node, node.value.innerHTML)
+    data.value.value = node.value.innerHTML
+    emit('send', data.value)
   }
 }
 function remove(e: Event) {
   if (node.value) {
     if (node.value.innerText.replace(/\n/, '') === '') {
       e.preventDefault()
-      emit('remove', props.node)
+      emit('remove', data.value)
     }
   }
 }
-function toggle() {
-  done.value = !done.value
+function complete() {
+  data.value.complete = !data.value.complete
 }
-function up(e: KeyboardEvent) {
-  const selection = window.getSelection()
-  if (
-    !node.value?.firstChild ||
-    selection?.focusNode === node.value?.firstChild
-  ) {
+function traverse(e: KeyboardEvent, direction: 'start' | 'end') {
+  const selection = window.getSelection(),
+    child =
+      direction === 'start' ? node.value?.firstChild : node.value?.lastChild
+  if (!child || selection?.focusNode === child) {
     e.preventDefault()
-    emit('up', selection?.focusOffset ?? 0)
+    if (direction === 'start') emit('up', selection?.focusOffset ?? 0)
+    else emit('down', selection?.focusOffset ?? 0)
   }
 }
-function down(e: KeyboardEvent) {
-  const selection = window.getSelection()
-  if (
-    !node.value?.lastChild ||
-    selection?.focusNode === node.value?.lastChild
-  ) {
-    e.preventDefault()
-    emit('down', selection?.focusOffset ?? 0)
-  }
-}
-function left(e: KeyboardEvent) {
-  const firstChild = node.value?.firstChild,
+function move(e: KeyboardEvent, direction: 'start' | 'end') {
+  const child =
+      direction === 'start' ? node.value?.firstChild : node.value?.lastChild,
     selection = window.getSelection()
   if (
-    !firstChild ||
-    firstChild instanceof HTMLBRElement ||
-    (firstChild instanceof Text &&
-      selection?.focusNode === firstChild &&
-      selection?.focusOffset === 0)
+    !child ||
+    child instanceof HTMLBRElement ||
+    (child instanceof Text &&
+      selection?.focusNode === child &&
+      child.length === (direction === 'start' ? 0 : selection?.focusOffset))
   ) {
     e.preventDefault()
-    emit('up', selection?.focusOffset ?? 0)
-  }
-}
-function right(e: KeyboardEvent) {
-  const lastChild = node.value?.lastChild,
-    selection = window.getSelection()
-  if (
-    !lastChild ||
-    lastChild instanceof HTMLBRElement ||
-    (lastChild instanceof Text &&
-      selection?.focusNode === lastChild &&
-      lastChild.length === selection?.focusOffset)
-  ) {
-    e.preventDefault()
-    emit('down', selection?.focusOffset ?? 0)
+    if (direction === 'start') emit('up', selection?.focusOffset ?? 0)
+    else emit('down', selection?.focusOffset ?? 0)
   }
 }
 </script>
 
 <template>
-  <article :id="props.node.id">
-    <label :for="`v-${props.node.id}`">
-      <input :id="`${props.node.id}`" type="checkbox" v-model="done" />
+  <article :id="props.nodeId">
+    <label :for="`v-${props.nodeId}`">
+      <input :id="`${props.nodeId}`" type="checkbox" v-model="data.complete" />
     </label>
     <p
       name="node"
@@ -137,7 +115,7 @@ function right(e: KeyboardEvent) {
       ref="node"
       class="host__node"
       :class="{
-        'host__node--done': done,
+        'host__node--done': data.complete,
         'host__node--focused': props.focused,
       }"
       autocomplete="off"
@@ -149,11 +127,11 @@ function right(e: KeyboardEvent) {
       @blur="$emit('blur')"
       @keydown.enter.exact.prevent="send"
       @keydown.delete="remove"
-      @keydown.ctrl.enter.exact.prevent="toggle"
-      @keydown.up.exact="up"
-      @keydown.down.exact="down"
-      @keydown.left.exact="left"
-      @keydown.right.exact="right"
+      @keydown.ctrl.enter.exact.prevent="complete"
+      @keydown.up.exact="traverse($event, 'start')"
+      @keydown.down.exact="traverse($event, 'end')"
+      @keydown.left.exact="move($event, 'start')"
+      @keydown.right.exact="move($event, 'end')"
     ></p>
   </article>
 </template>

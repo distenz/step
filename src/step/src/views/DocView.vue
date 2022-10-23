@@ -1,69 +1,52 @@
 <script setup lang="ts">
 import type { IDocumentNode, ITraversalData } from '@/global/types'
-import { nanoid } from 'nanoid'
+import { nodeStore } from '@/stores/node.store'
 
-import { computed, onMounted, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import DocNode from '../components/DocNode.vue'
 
-const cursor = ref<HTMLTextAreaElement | undefined>(),
-  children = ref<Array<IDocumentNode>>([])
-if (!children.value.length) {
-  next(0, false)
-}
-const lastChild = computed(() => children.value[children.value.length - 1]),
+const nodes = nodeStore(),
+  lastChild = computed(() => nodes.order[nodes.order.length - 1]),
   traversal = ref<ITraversalData>({
     offset: 'end',
     direction: 'start',
   }),
-  focused = ref<IDocumentNode['id']>(lastChild.value.id),
+  focused = ref<IDocumentNode['id']>(nodes.map[lastChild.value].id),
   showHelp = ref(false)
 
-onMounted(() => {
-  if (children.value.length === 0) {
-    next()
-  }
-})
+watch(
+  () => nodes.order,
+  () => next(0, false)
+)
 
-function save(v: IDocumentNode, c: string) {
-  const vIdx = children.value.findIndex(vf => vf.id === v.id)
-  children.value[vIdx].value = c
-
-  next(vIdx + 1)
+function newLine(v: IDocumentNode) {
+  next(nodes._findOrderOffset(v.id) + 1)
 }
-function remove(v: IDocumentNode) {
-  const cIdx = children.value.findIndex(fv => fv.id === v.id)
-  children.value.splice(cIdx, 1)
-  focused.value = children.value[Math.max(cIdx - 1, 0)].id
+function removeLine(v: IDocumentNode) {
+  const offset = nodes.remove(v.id)
+
+  focused.value = nodes.order[Math.max(offset - 1, 0)]
   traversal.value = {
     offset: 'end',
     direction: 'end',
   }
 }
 function next(offset?: number, focus = true) {
-  const newV = { id: nanoid(), value: '' }
-  children.value.splice(offset || children.value.length, 0, newV)
+  const insertion = nodes.create(offset)
   if (focus) {
-    focused.value = newV.id
+    focused.value = insertion.node.id
     traversal.value = { offset: 'end', direction: 'end' }
   }
 }
-function focusUp(offset: number) {
-  const fVIdx = children.value.findIndex(fv => fv.id === focused.value)
-  if (children.value[fVIdx - 1]?.id) {
-    focused.value = children.value[fVIdx - 1].id
+function traverse(inlineOffset: number, direction: 'up' | 'down') {
+  const order = nodes._findOrderOffset(focused.value),
+    nextIdx = direction === 'up' ? order - 1 : order + 1
+
+  if (nextIdx >= 0 && nextIdx < nodes.order.length) {
+    focused.value = nodes.order[nextIdx]
     traversal.value = {
-      offset,
-      direction: 'end',
-    }
-  }
-}
-function focusDown(offset: number) {
-  const fVIdx = children.value.findIndex(fv => fv.id === focused.value)
-  if (children.value[fVIdx + 1]?.id) {
-    focused.value = children.value[fVIdx + 1].id
-    traversal.value = {
-      offset,
-      direction: 'start',
+      offset: inlineOffset,
+      direction: direction === 'up' ? 'end' : 'start',
     }
   }
 }
@@ -85,17 +68,16 @@ function focusDown(offset: number) {
       <p>Delete all text in task for removal</p>
     </article>
     <DocNode
-      v-for="v in children"
-      :key="v.id"
-      ref="cursor"
-      :focused="v.id === focused"
+      v-for="vId in nodes.order"
+      :key="vId"
+      :focused="vId === focused"
       :traverse="traversal"
-      :node="v"
-      @send="save"
-      @remove="remove"
-      @focus="focused = v.id"
-      @up="focusUp"
-      @down="focusDown"
+      :nodeId="vId"
+      @send="newLine"
+      @remove="removeLine"
+      @focus="focused = vId"
+      @up="traverse($event, 'up')"
+      @down="traverse($event, 'down')"
     ></DocNode>
   </main>
 </template>
